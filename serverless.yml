@@ -1,0 +1,38 @@
+service: sls-fargate
+frameworkVersion: '3'
+provider:
+  name: aws
+  ecr:
+    images:
+      my-task:
+        path: ./
+
+fargate:
+  clusterName: sls-fargate
+  containerInsights: true
+  memory: '0.5GB'
+  cpu: 256
+  architecture: X86_64
+  vpc:
+    assignPublicIp: true
+    securityGroupIds:
+      - sg-006f415a1d30d62d1
+    subnetIds:
+      - subnet-0cb2c1303b4628af8
+
+  tasks:
+    hello-task:
+      name: hello-task
+      image: my-task
+      vpc:
+        securityGroupIds:
+          - sg-006f415a1d30d62d1
+        subnetIds:
+          - subnet-0cb2c1303b4628af8
+      memory: '0.5GB'
+      cpu: 256
+      service:
+        desiredCount: 1
+
+plugins:
+  - serverless-fargate
